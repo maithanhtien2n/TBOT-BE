@@ -45,6 +45,6 @@ module.exports = (app) => {
         onResponse(res, null).badRequest(error);
       }
     },
-    "NO_AUTH"
+    "ADMIN"
   );
 };
