@@ -1,10 +1,11 @@
+require("dotenv").config();
 const mongoose = require("mongoose");
 
 // Kết nối đến MongoDB
-mongoose.connect(
-  "mongodb+srv://tbotai2000:0573725920@tbotai.sg8la6d.mongodb.net/tbotai?retryWrites=true&w=majority&appName=TBOTAI",
-  { useNewUrlParser: true, useUnifiedTopology: true }
-);
+mongoose.connect(process.env.DATA_BASE_CONNECT, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 // Sự kiện kết nối thành công
 mongoose.connection.on("connected", () => {
