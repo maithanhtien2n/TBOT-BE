@@ -34,11 +34,7 @@ module.exports = (app) => {
     async (req, res) => {
       try {
         // Các hàm xử lý request
-        const request = checkNullRequest(req.body, [
-          "documentId",
-          "application",
-          "topUp",
-        ]);
+        const request = checkNullRequest(req.body, ["application", "topUp"]);
 
         // Hàm xử lý logic và trả ra kết quả
         const result = await documentService.save(request);
