@@ -20,10 +20,9 @@ module.exports = {
       if (!account) {
         throwError("EMAIL_AUTHENTICATION", "Email chưa được xác thực!");
       }
-
-      const result = await Account.updateOne(
+      await Account.updateOne(
         { _id: account?._id },
-        { password: bcrypt.hashSync(password, 10) } // Mã hóa mật khẩu
+        { password: bcrypt.hashSync(password, 10), status: "ACTIVE" }
       );
 
       await User.create({ accountId: account?._id });

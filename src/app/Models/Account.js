@@ -10,7 +10,7 @@ const Account = mongoose.model(
       moneyBalance: { type: Number, required: false, default: 0 },
       otp: { type: Number, required: true, default: null },
       role: { type: String, required: false, default: "USER" },
-      status: { type: String, required: false, default: "ACTIVE" },
+      status: { type: String, required: false, default: "NO_AUTH" },
     },
     { timestamps: true }
   )

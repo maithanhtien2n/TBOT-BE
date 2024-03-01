@@ -30,6 +30,9 @@ module.exports = {
 
       const active = all.filter(({ status }) => status === "ACTIVE");
       const locked = all.filter(({ status }) => status === "LOCKED");
+      const noAuth = await Account.find({ status: "NO_AUTH" }).select(
+        "email otp role status createdAt updatedAt"
+      );
 
       switch (tab) {
         case "ALL":
@@ -41,6 +44,7 @@ module.exports = {
             ),
             active,
             locked,
+            noAuth,
           };
         case "ACTIVE":
           return {
@@ -51,12 +55,25 @@ module.exports = {
                 item?.phoneNumber?.includes(keySearch)
             ),
             locked,
+            noAuth,
           };
         case "LOCKED":
           return {
             all,
             active,
             locked: locked.filter(
+              (item) =>
+                item?.email?.includes(keySearch) ||
+                item?.phoneNumber?.includes(keySearch)
+            ),
+            noAuth,
+          };
+        case "NO_AUTH":
+          return {
+            all,
+            active,
+            locked,
+            noAuth: noAuth.filter(
               (item) =>
                 item?.email?.includes(keySearch) ||
                 item?.phoneNumber?.includes(keySearch)
@@ -200,6 +217,20 @@ module.exports = {
         }))
         .reverse();
       return result;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  delete: async (ids) => {
+    try {
+      for (const id of ids) {
+        getById(id, Account, "tài khoản", async (value) => {
+          await Account.deleteOne(value);
+        });
+      }
+
+      return ids.length + " dòng";
     } catch (error) {
       throw error;
     }

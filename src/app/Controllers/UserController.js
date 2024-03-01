@@ -131,4 +131,24 @@ module.exports = (app) => {
       onResponse(res, null).badRequest(error);
     }
   });
+
+  // Api xóa người dùng
+  onRoute(
+    "delete",
+    "",
+    async (req, res) => {
+      try {
+        // Hàm xử lý logic và trả ra kết quả
+        const result = await userService.delete(req.query.ids);
+
+        // Hàm trả về response cho người dùng
+        onResponse(res, result).ok({
+          sttValue: `Xóa ${result} dữ liệu thành công!`,
+        });
+      } catch (error) {
+        onResponse(res, null).badRequest(error);
+      }
+    },
+    "ADMIN"
+  );
 };
