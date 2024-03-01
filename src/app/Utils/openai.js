@@ -59,7 +59,10 @@ module.exports = {
         createdAt: convertTimestampToDateTimeString(message.created_at),
       }));
     } catch (error) {
-      throw error;
+      throw {
+        sttCode: "AI_ERROR",
+        sttValue: "Lỗi AI đã bị kiệt sức!",
+      };
     }
   },
 
@@ -73,7 +76,10 @@ module.exports = {
 
       return assistant;
     } catch (error) {
-      throw error;
+      throw {
+        sttCode: "AI_ERROR",
+        sttValue: "Lỗi AI đã bị kiệt sức!",
+      };
     }
   },
 
@@ -155,7 +161,10 @@ module.exports = {
 
       return assistant;
     } catch (error) {
-      throw error;
+      throw {
+        sttCode: "AI_ERROR",
+        sttValue: "Lỗi AI đã bị kiệt sức!",
+      };
     }
   },
 
@@ -170,7 +179,10 @@ module.exports = {
         createdAt: convertTimestampToDateTimeString(message.created_at),
       }));
     } catch (error) {
-      throw error;
+      throw {
+        sttCode: "AI_ERROR",
+        sttValue: "Lỗi AI đã bị kiệt sức!",
+      };
     }
   },
 
@@ -180,7 +192,10 @@ module.exports = {
 
       return thread;
     } catch (error) {
-      throw error;
+      throw {
+        sttCode: "AI_ERROR",
+        sttValue: "Lỗi AI đã bị kiệt sức!",
+      };
     }
   },
 
@@ -193,7 +208,10 @@ module.exports = {
 
       return thread;
     } catch (error) {
-      throw error;
+      throw {
+        sttCode: "AI_ERROR",
+        sttValue: "Lỗi AI đã bị kiệt sức!",
+      };
     }
   },
 
@@ -208,7 +226,10 @@ module.exports = {
           base64: file.id,
         });
       } catch (error) {
-        console.error(`Lỗi khi lấy thông tin file với id ${fileId}:`, error);
+        throw {
+          sttCode: "AI_ERROR",
+          sttValue: "Lỗi AI đã bị kiệt sức!",
+        };
       }
     }
 
@@ -225,7 +246,10 @@ module.exports = {
       });
       return response.data;
     } catch (error) {
-      throw error;
+      throw {
+        sttCode: "AI_ERROR",
+        sttValue: "Lỗi AI đã bị kiệt sức!",
+      };
     }
   },
 
@@ -244,7 +268,10 @@ module.exports = {
 
       return speechFile;
     } catch (error) {
-      throw error;
+      throw {
+        sttCode: "AI_ERROR",
+        sttValue: "Lỗi AI đã bị kiệt sức!",
+      };
     }
   },
 };
