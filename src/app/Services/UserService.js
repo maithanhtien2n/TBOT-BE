@@ -198,13 +198,7 @@ module.exports = {
         query.accountId = accountId;
       }
 
-      const account = await Account.findOne({ email: keySearch });
-
-      if (keySearch && account) {
-        query.accountId = account._id;
-      }
-
-      const result = (
+      let result = (
         await TopUpHistory.find(query).populate({
           path: "accountId",
           model: Account,
@@ -216,6 +210,11 @@ module.exports = {
           ...cloneObjectWithoutFields(item, ["accountId", "__v"]),
         }))
         .reverse();
+
+      if (keySearch) {
+        result = result.filter((item) => item.email.includes(keySearch));
+      }
+
       return result;
     } catch (error) {
       throw error;
