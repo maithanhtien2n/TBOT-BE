@@ -14,7 +14,7 @@ const User = mongoose.model(
       avatar: { type: String, required: false, default: null },
       fullName: { type: String, required: false, default: null },
       gender: { type: String, required: false, default: null },
-      dateOfBirth: { type: Date, required: false, default: null },
+      dateOfBirth: { type: String, required: false, default: null },
       phoneNumber: { type: String, required: false, default: null },
     },
     { timestamps: true }
