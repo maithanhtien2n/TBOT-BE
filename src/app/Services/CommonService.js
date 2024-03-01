@@ -4,6 +4,18 @@ require("dotenv").config();
 const { throwError } = require("../Utils/index");
 const { default: mongoose } = require("mongoose");
 
+function readDirectory(directoryPath) {
+  return new Promise((resolve, reject) => {
+    fs.readdir(directoryPath, (err, files) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(files);
+      }
+    });
+  });
+}
+
 module.exports = {
   uploadFile: async (
     Model,
@@ -90,6 +102,32 @@ module.exports = {
       }
     } else {
       throwError("ID_INVALID", `ID không hợp lệ: ${id}`);
+    }
+  },
+
+  getAllFileNameAudio: async () => {
+    try {
+      const directoryPath = "uploads/audio";
+      const files = await readDirectory(directoryPath);
+      return files;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  deleteAllFileNameAudio: async () => {
+    try {
+      const directoryPath = "uploads/audio";
+      const files = await readDirectory(directoryPath);
+      for (const file of files) {
+        const path = `${directoryPath}/${file}`;
+        if (file !== "file-test.txt") {
+          fs.unlinkSync(path);
+        }
+      }
+      return "Đã xóa tất cả file audio!";
+    } catch (error) {
+      throw error;
     }
   },
 };

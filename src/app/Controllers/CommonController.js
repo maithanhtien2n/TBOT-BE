@@ -2,7 +2,7 @@ module.exports = (app, io) => {
   const { onResponse, checkNullRequest } = require("../Utils/index");
   const { onRouteCustom } = require("../Middlewares/index");
 
-  const controllerName = "user";
+  const controllerName = "common";
   const onRoute = (method, route, handler, accuracy) => {
     onRouteCustom(app, controllerName, method, route, handler, accuracy);
   };
@@ -51,6 +51,42 @@ module.exports = (app, io) => {
   onApiOpenFile("/image");
   onApiOpenFile("/notification");
   onApiOpenFile("/audio");
+
+  // Api lấy danh sách name file audio
+  onRoute(
+    "get",
+    "/file-name-audio",
+    async (req, res) => {
+      try {
+        // Hàm xử lý logic và trả ra kết quả
+        const result = await commonService.getAllFileNameAudio();
+
+        // Hàm trả về response cho người dùng
+        onResponse(res, result).ok({ sttValue: "Lấy dữ liệu thành công!" });
+      } catch (error) {
+        onResponse(res, null).badRequest(error);
+      }
+    },
+    "NO_AUTH"
+  );
+
+  // Api lấy danh sách name file audio
+  onRoute(
+    "delete",
+    "/file-name-audio",
+    async (req, res) => {
+      try {
+        // Hàm xử lý logic và trả ra kết quả
+        const result = await commonService.deleteAllFileNameAudio();
+
+        // Hàm trả về response cho người dùng
+        onResponse(res, result).ok({ sttValue: "Xóa dữ liệu thành công!" });
+      } catch (error) {
+        onResponse(res, null).badRequest(error);
+      }
+    },
+    "NO_AUTH"
+  );
 
   // Socket.io -------------------------------------------
 

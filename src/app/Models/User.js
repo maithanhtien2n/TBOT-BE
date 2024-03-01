@@ -1,6 +1,5 @@
 const mongoose = require("../../Database/ConnectDatabase");
 const Schema = mongoose.Schema;
-const { Date } = require("mongoose");
 
 const User = mongoose.model(
   "Users",
