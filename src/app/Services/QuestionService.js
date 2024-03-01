@@ -18,17 +18,24 @@ module.exports = {
   getAllAdmin: async ({ tab = "ALL", keySearch = "" }) => {
     try {
       const questions = (
-        await Question.find().populate({
-          path: "userId",
-          model: User,
-          select: "avatar fullName",
-        })
+        await Question.find()
+          .populate({
+            path: "accountId",
+            model: Account,
+            select: "email",
+          })
+          .populate({
+            path: "userId",
+            model: User,
+            select: "avatar fullName",
+          })
       ).reverse();
 
       const all = questions.map((item) => ({
         _id: item?._id,
         accountId: item?.accountId,
         question: {
+          email: item?.accountId?.email,
           avatar: item?.userId?.avatar,
           fullName: item?.userId?.fullName,
           content: item?.question.split("$")[1],
