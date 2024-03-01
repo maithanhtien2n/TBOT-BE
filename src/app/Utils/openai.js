@@ -61,7 +61,7 @@ module.exports = {
     } catch (error) {
       throw {
         sttCode: "AI_ERROR",
-        sttValue: "Lỗi AI đã bị kiệt sức!",
+        sttValue: "AI đã bị kiệt sức, vui lòng thử lại trong giây lác!",
       };
     }
   },
@@ -78,7 +78,7 @@ module.exports = {
     } catch (error) {
       throw {
         sttCode: "AI_ERROR",
-        sttValue: "Lỗi AI đã bị kiệt sức!",
+        sttValue: "AI đã bị kiệt sức, vui lòng thử lại trong giây lác!",
       };
     }
   },
@@ -163,7 +163,7 @@ module.exports = {
     } catch (error) {
       throw {
         sttCode: "AI_ERROR",
-        sttValue: "Lỗi AI đã bị kiệt sức!",
+        sttValue: "AI đã bị kiệt sức, vui lòng thử lại trong giây lác!",
       };
     }
   },
@@ -181,7 +181,7 @@ module.exports = {
     } catch (error) {
       throw {
         sttCode: "AI_ERROR",
-        sttValue: "Lỗi AI đã bị kiệt sức!",
+        sttValue: "AI đã bị kiệt sức, vui lòng thử lại trong giây lác!",
       };
     }
   },
@@ -194,7 +194,7 @@ module.exports = {
     } catch (error) {
       throw {
         sttCode: "AI_ERROR",
-        sttValue: "Lỗi AI đã bị kiệt sức!",
+        sttValue: "AI đã bị kiệt sức, vui lòng thử lại trong giây lác!",
       };
     }
   },
@@ -210,7 +210,7 @@ module.exports = {
     } catch (error) {
       throw {
         sttCode: "AI_ERROR",
-        sttValue: "Lỗi AI đã bị kiệt sức!",
+        sttValue: "AI đã bị kiệt sức, vui lòng thử lại trong giây lác!",
       };
     }
   },
@@ -228,7 +228,7 @@ module.exports = {
       } catch (error) {
         throw {
           sttCode: "AI_ERROR",
-          sttValue: "Lỗi AI đã bị kiệt sức!",
+          sttValue: "AI đã bị kiệt sức, vui lòng thử lại trong giây lác!",
         };
       }
     }
@@ -248,7 +248,7 @@ module.exports = {
     } catch (error) {
       throw {
         sttCode: "AI_ERROR",
-        sttValue: "Lỗi AI đã bị kiệt sức!",
+        sttValue: "AI đã bị kiệt sức, vui lòng thử lại trong giây lác!",
       };
     }
   },
@@ -270,7 +270,7 @@ module.exports = {
     } catch (error) {
       throw {
         sttCode: "AI_ERROR",
-        sttValue: "Lỗi AI đã bị kiệt sức!",
+        sttValue: "AI đã bị kiệt sức, vui lòng thử lại trong giây lác!",
       };
     }
   },
