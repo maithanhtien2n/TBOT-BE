@@ -112,7 +112,7 @@ module.exports = {
 
       const fieldImage = "avatar";
       let infoData = { ...data };
-      if (!data[fieldImage] || data[fieldImage].base64.includes("http")) {
+      if (!data[fieldImage] || data[fieldImage].base64.includes("https")) {
         infoData.avatar = null;
       }
 
@@ -172,7 +172,7 @@ module.exports = {
         await Notification.create({
           accountId: id,
           sendType: "PERSONAL",
-          image: `http://${host}/uploads/image/top-up.webp`,
+          image: `https://${host}/uploads/image/top-up.webp`,
           title: `Tài khoản của bạn vừa được nạp +${formatToVND(moneyNumber)}`,
           content: `<p>Chúng tôi vừa nạp thành công ${formatToVND(
             moneyNumber

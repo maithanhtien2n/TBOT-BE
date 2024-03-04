@@ -14,7 +14,7 @@ module.exports = {
 
       const result = {
         role: "assistant",
-        content: `http://${host}/${content}`,
+        content: `https://${host}/${content}`,
         createdAt: formatDate(new Date(), true),
       };
 

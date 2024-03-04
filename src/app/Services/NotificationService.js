@@ -150,7 +150,7 @@ module.exports = {
       if (
         !data[fieldImage] ||
         !data[fieldImage]?.base64 ||
-        data[fieldImage]?.base64?.includes("http")
+        data[fieldImage]?.base64?.includes("https")
       ) {
         infoData.image = null;
       }
@@ -174,7 +174,7 @@ module.exports = {
         await Notification.create({
           accountId: accountId,
           sendType: data?.sendType,
-          image: `http://${data.host}/uploads/image/top-up.webp`,
+          image: `https://${data.host}/uploads/image/top-up.webp`,
           title: data?.title,
           content: data?.content,
         });
