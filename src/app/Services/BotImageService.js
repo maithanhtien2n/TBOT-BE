@@ -20,7 +20,7 @@ module.exports = {
 
       await Account.updateOne(
         { _id: accountId },
-        { $inc: { moneyBalance: -200 } }
+        { $inc: { moneyBalance: -100 } }
       );
 
       return result;

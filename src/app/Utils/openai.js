@@ -30,6 +30,13 @@ const convertTimestampToDateTimeString = (timestamp) => {
 };
 
 module.exports = {
+  calculateCost: (text, pricePerToken = 2) => {
+    const tokens = text.split(/\s+/);
+    const numTokens = tokens.length;
+    const cost = numTokens * pricePerToken;
+    return -cost;
+  },
+
   chatBot: async ({ threadId, userMessage, assistantId }) => {
     try {
       await openai.beta.threads.messages.create(threadId, {

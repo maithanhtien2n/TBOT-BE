@@ -1,6 +1,6 @@
 require("dotenv").config();
 
-const { convertTextToSpeech } = require("../Utils/openai");
+const { convertTextToSpeech, calculateCost } = require("../Utils/openai");
 
 const { throwError, formatDate } = require("../Utils/index");
 const { getById } = require("./CommonService");
@@ -20,7 +20,7 @@ module.exports = {
 
       await Account.updateOne(
         { _id: accountId },
-        { $inc: { moneyBalance: -200 } }
+        { $inc: { moneyBalance: calculateCost(input) } }
       );
 
       return result;

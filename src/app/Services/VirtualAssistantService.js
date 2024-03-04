@@ -8,6 +8,7 @@ const {
   createThread,
   deleteThread,
   getFileInfo,
+  calculateCost,
 } = require("../Utils/openai");
 
 const { throwError } = require("../Utils/index");
@@ -37,7 +38,11 @@ module.exports = {
 
         await Account.updateOne(
           { _id: value._id },
-          { $inc: { moneyBalance: -200 } }
+          {
+            $inc: {
+              moneyBalance: calculateCost(data.content + result[0].content),
+            },
+          }
         );
 
         return result.reverse();
