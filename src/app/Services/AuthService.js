@@ -69,8 +69,8 @@ module.exports = {
             "updatedAt",
             "__v",
           ]),
-          process.env.JWT_SECRET
-          // { expiresIn: "10h" }
+          process.env.JWT_SECRET,
+          { expiresIn: "12h" }
         ),
       };
     } catch (error) {
