@@ -22,7 +22,13 @@ module.exports = {
       }
       await Account.updateOne(
         { _id: account?._id },
-        { password: bcrypt.hashSync(password, 10), status: "ACTIVE" }
+        {
+          $set: {
+            password: bcrypt.hashSync(password, 10),
+            status: "ACTIVE",
+          },
+          $inc: { moneyBalance: 7000 },
+        }
       );
 
       await User.create({ accountId: account?._id });
