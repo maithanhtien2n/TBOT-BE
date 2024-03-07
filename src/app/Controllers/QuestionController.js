@@ -1,5 +1,9 @@
 module.exports = (app) => {
-  const { onResponse, checkNullRequest } = require("../Utils/index");
+  const {
+    onResponse,
+    checkNullRequest,
+    renderHost,
+  } = require("../Utils/index");
   const { onRouteCustom } = require("../Middlewares/index");
 
   const controllerName = "question";
@@ -85,7 +89,7 @@ module.exports = (app) => {
         const result = await questionService.update({
           questionId: req.params.id,
           ...request,
-          host: req.headers.host,
+          host: renderHost(req),
         });
 
         // Hàm trả về response cho người dùng

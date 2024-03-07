@@ -178,7 +178,7 @@ module.exports = {
           await Notification.create({
             accountId: value?.accountId,
             sendType: "PERSONAL",
-            image: `https://${host}/uploads/image/avatar-admin.jpg`,
+            image: `${host}/uploads/image/avatar-admin.jpg`,
             title: `Quản trị viên vừa trả lời câu hỏi của bạn!`,
             content: `<p>Bạn: ${
               value?.question?.split("$")[1]

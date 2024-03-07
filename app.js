@@ -25,6 +25,7 @@ require("./src/app/Controllers/QuestionController")(app);
 require("./src/app/Controllers/DocumentController")(app);
 require("./src/app/Controllers/BotImageController")(app);
 require("./src/app/Controllers/BotAudioController")(app);
+require("./src/app/Controllers/BotVersatileController")(app);
 
 const port = process.env.PORT;
 server.listen(port, () => {

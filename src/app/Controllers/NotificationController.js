@@ -1,5 +1,9 @@
 module.exports = (app) => {
-  const { onResponse, checkNullRequest } = require("../Utils/index");
+  const {
+    onResponse,
+    checkNullRequest,
+    renderHost,
+  } = require("../Utils/index");
   const { onRouteCustom } = require("../Middlewares/index");
 
   const controllerName = "notification";
@@ -82,7 +86,7 @@ module.exports = (app) => {
           req.query.notificationId,
           {
             ...request,
-            host: req.headers.host,
+            host: renderHost(req),
           }
         );
 
@@ -112,7 +116,7 @@ module.exports = (app) => {
         // Hàm xử lý logic và trả ra kết quả
         const result = await notificationService.addNotificationTopUp({
           ...request,
-          host: req.headers.host,
+          host: renderHost(req),
         });
 
         // Hàm trả về response cho người dùng

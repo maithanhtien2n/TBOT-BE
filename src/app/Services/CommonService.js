@@ -34,7 +34,7 @@ module.exports = {
       let body = { ...value };
 
       if (value[file.field] && value[file.field]?.base64) {
-        body[file.field] = `https://${body.host}/${path}`;
+        body[file.field] = `${body.host}/${path}`;
       } else {
         delete body[file.field];
       }

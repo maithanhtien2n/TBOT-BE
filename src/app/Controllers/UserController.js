@@ -1,5 +1,9 @@
 module.exports = (app) => {
-  const { onResponse, checkNullRequest } = require("../Utils/index");
+  const {
+    onResponse,
+    checkNullRequest,
+    renderHost,
+  } = require("../Utils/index");
   const { onRouteCustom } = require("../Middlewares/index");
 
   const controllerName = "user";
@@ -54,7 +58,7 @@ module.exports = (app) => {
       // Hàm xử lý logic và trả ra kết quả
       const result = await userService.saveUser({
         ...request,
-        host: req.headers.host,
+        host: renderHost(req),
       });
 
       // Hàm trả về response cho người dùng
@@ -99,7 +103,7 @@ module.exports = (app) => {
         // Hàm xử lý logic và trả ra kết quả
         const result = await userService.updateMoneyBalanceUser({
           ...request,
-          host: req.headers.host,
+          host: renderHost(req),
         });
 
         // Hàm trả về response cho người dùng

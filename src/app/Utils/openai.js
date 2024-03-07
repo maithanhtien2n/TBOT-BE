@@ -1,44 +1,43 @@
 const fs = require("fs");
 require("dotenv").config();
 const OpenAI = require("openai");
-const { throwError } = require("./index");
+const {
+  throwError,
+  convertTimestampToDateTimeString,
+  onRenderPath,
+} = require("./index");
+
+const { Account } = require("../Models/Account");
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY.replace(/@/g, ""),
 });
 
-const onRenderPath = (folder, fileName) => {
-  return `uploads/${folder}/${Date.now()}$${fileName}`;
+const GPT_VERSION = "gpt-3.5-turbo";
+
+const AI_ERROR = {
+  sttCode: "AI_ERROR",
+  sttValue: "AI đã bị kiệt sức, vui lòng thử lại trong giây lác!",
 };
 
-const convertTimestampToDateTimeString = (timestamp) => {
-  // Tạo đối tượng Date từ timestamp (được nhân với 1000 để chuyển đổi sang đơn vị mili giây)
-  const date = new Date(timestamp * 1000);
+const calculateCost = async ({ accountId, text, pricePerToken = 2 }) => {
+  const tokens = text.split(/\s+/);
+  const numTokens = tokens.length;
+  const cost = numTokens * pricePerToken;
 
-  // Lấy thông tin ngày, tháng, năm, giờ, phút, giây
-  const day = date.getDate();
-  const month = date.getMonth() + 1; // Tháng trong đối tượng Date bắt đầu từ 0
-  const year = date.getFullYear();
-  const hours = date.getHours();
-  const minutes = date.getMinutes();
-
-  // Format thành chuỗi ngày tháng năm giờ phút giây
-  const formattedString = `${day}/${month}/${year} ${hours}:${minutes}`;
-
-  // Trả về chuỗi ngày tháng năm giờ phút giây
-  return formattedString;
+  await Account.updateOne(
+    { _id: accountId },
+    { $inc: { moneyBalance: -cost } }
+  );
 };
 
 module.exports = {
-  calculateCost: (text, pricePerToken = 2) => {
-    const tokens = text.split(/\s+/);
-    const numTokens = tokens.length;
-    const cost = numTokens * pricePerToken;
-    return -cost;
-  },
-
-  chatBot: async ({ threadId, userMessage, assistantId }) => {
+  chatBot: async ({ accountId, threadId, userMessage, assistantId }) => {
     try {
+      if (!accountId || !threadId || !userMessage || assistantId) {
+        return null;
+      }
+
       await openai.beta.threads.messages.create(threadId, {
         role: "user",
         content: userMessage,
@@ -59,17 +58,26 @@ module.exports = {
 
       const messages = await openai.beta.threads.messages.list(threadId);
 
-      return messages.data.map((message) => ({
+      const result = messages.data.map((message) => ({
         id: message.id,
         role: message.role,
         content: message.content[0].text.value,
         createdAt: convertTimestampToDateTimeString(message.created_at),
       }));
+
+      await calculateCost({
+        accountId,
+        text: userMessage,
+        pricePerToken: 1,
+      });
+      await calculateCost({
+        accountId,
+        text: result.content,
+      });
+
+      return result;
     } catch (error) {
-      throw {
-        sttCode: "AI_ERROR",
-        sttValue: "AI đã bị kiệt sức, vui lòng thử lại trong giây lác!",
-      };
+      throw AI_ERROR;
     }
   },
 
@@ -83,10 +91,7 @@ module.exports = {
 
       return assistant;
     } catch (error) {
-      throw {
-        sttCode: "AI_ERROR",
-        sttValue: "AI đã bị kiệt sức, vui lòng thử lại trong giây lác!",
-      };
+      throw AI_ERROR;
     }
   },
 
@@ -146,7 +151,7 @@ module.exports = {
             name,
             instructions,
             tools: [{ type: "code_interpreter" }],
-            model: "gpt-3.5-turbo",
+            model: GPT_VERSION,
             file_ids: fileIds,
           });
         } catch (error) {
@@ -158,7 +163,7 @@ module.exports = {
             name,
             instructions,
             tools: [{ type: "code_interpreter" }],
-            model: "gpt-3.5-turbo",
+            model: GPT_VERSION,
             file_ids: fileIds,
           });
         } catch (error) {
@@ -168,10 +173,7 @@ module.exports = {
 
       return assistant;
     } catch (error) {
-      throw {
-        sttCode: "AI_ERROR",
-        sttValue: "AI đã bị kiệt sức, vui lòng thử lại trong giây lác!",
-      };
+      throw AI_ERROR;
     }
   },
 
@@ -186,10 +188,7 @@ module.exports = {
         createdAt: convertTimestampToDateTimeString(message.created_at),
       }));
     } catch (error) {
-      throw {
-        sttCode: "AI_ERROR",
-        sttValue: "AI đã bị kiệt sức, vui lòng thử lại trong giây lác!",
-      };
+      throw AI_ERROR;
     }
   },
 
@@ -199,10 +198,7 @@ module.exports = {
 
       return thread;
     } catch (error) {
-      throw {
-        sttCode: "AI_ERROR",
-        sttValue: "AI đã bị kiệt sức, vui lòng thử lại trong giây lác!",
-      };
+      throw AI_ERROR;
     }
   },
 
@@ -215,10 +211,7 @@ module.exports = {
 
       return thread;
     } catch (error) {
-      throw {
-        sttCode: "AI_ERROR",
-        sttValue: "AI đã bị kiệt sức, vui lòng thử lại trong giây lác!",
-      };
+      throw AI_ERROR;
     }
   },
 
@@ -243,25 +236,40 @@ module.exports = {
     return fileInfoArray;
   },
 
-  createImage: async (prompt) => {
+  createImage: async ({ accountId, prompt }) => {
     try {
+      if (!accountId || !prompt) {
+        return null;
+      }
+
       const response = await openai.images.generate({
         model: "dall-e-2",
         prompt,
         n: 2,
         size: "1024x1024",
       });
+
+      await Account.updateOne(
+        { _id: accountId },
+        { $inc: { moneyBalance: -100 } }
+      );
+
       return response.data;
     } catch (error) {
-      throw {
-        sttCode: "AI_ERROR",
-        sttValue: "AI đã bị kiệt sức, vui lòng thử lại trong giây lác!",
-      };
+      throw AI_ERROR;
     }
   },
 
-  convertTextToSpeech: async (input, voice = "alloy") => {
+  convertTextToSpeech: async ({
+    accountId = null,
+    input = null,
+    voice = "alloy",
+  }) => {
     try {
+      if (!accountId || !input) {
+        return null;
+      }
+
       const speechFile = onRenderPath("audio", "speech.mp3");
 
       const mp3 = await openai.audio.speech.create({
@@ -273,12 +281,44 @@ module.exports = {
       const buffer = Buffer.from(await mp3.arrayBuffer());
       await fs.promises.writeFile(speechFile, buffer);
 
+      await calculateCost({
+        accountId,
+        text: input,
+      });
+
       return speechFile;
     } catch (error) {
-      throw {
-        sttCode: "AI_ERROR",
-        sttValue: "AI đã bị kiệt sức, vui lòng thử lại trong giây lác!",
-      };
+      throw AI_ERROR;
+    }
+  },
+
+  botVersatile: async ({ accountId = null, messages = [] }) => {
+    try {
+      if (!accountId || !messages.length) {
+        return null;
+      }
+
+      const response = await openai.chat.completions.create({
+        model: GPT_VERSION,
+        messages,
+        temperature: 0.7,
+        max_tokens: 64,
+        top_p: 1,
+      });
+
+      await calculateCost({
+        accountId,
+        text: messages[messages.length - 1].content,
+        pricePerToken: 1,
+      });
+      await calculateCost({
+        accountId,
+        text: response.choices[0].message.content,
+      });
+
+      return response.choices[0].message;
+    } catch (error) {
+      throw AI_ERROR;
     }
   },
 };

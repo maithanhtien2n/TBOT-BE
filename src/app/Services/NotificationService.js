@@ -174,7 +174,7 @@ module.exports = {
         await Notification.create({
           accountId: accountId,
           sendType: data?.sendType,
-          image: `https://${data.host}/uploads/image/top-up.webp`,
+          image: `${data.host}/uploads/image/top-up.webp`,
           title: data?.title,
           content: data?.content,
         });

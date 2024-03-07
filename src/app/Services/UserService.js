@@ -172,7 +172,7 @@ module.exports = {
         await Notification.create({
           accountId: id,
           sendType: "PERSONAL",
-          image: `https://${host}/uploads/image/top-up.webp`,
+          image: `${host}/uploads/image/top-up.webp`,
           title: `Tài khoản của bạn vừa được nạp +${formatToVND(moneyNumber)}`,
           content: `<p>Chúng tôi vừa nạp thành công ${formatToVND(
             moneyNumber

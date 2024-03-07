@@ -8,7 +8,6 @@ const {
   createThread,
   deleteThread,
   getFileInfo,
-  calculateCost,
 } = require("../Utils/openai");
 
 const { throwError } = require("../Utils/index");
@@ -19,9 +18,9 @@ const { User } = require("../Models/User");
 const { Account } = require("../Models/Account");
 
 module.exports = {
-  chat: async (data) => {
+  chat: async ({ accountId, threadId, content }) => {
     try {
-      return getById(data.accountId, Account, "tài khoản", async (value) => {
+      return getById(accountId, Account, "tài khoản", async (value) => {
         const assistant = await VirtualAssistant.findOne({
           accountId: value._id,
         });
@@ -31,19 +30,11 @@ module.exports = {
         }
 
         const result = await chatBot({
-          threadId: data.threadId,
-          userMessage: data.content,
+          accountId,
+          threadId,
+          userMessage: content,
           assistantId: assistant.assistantId,
         });
-
-        await Account.updateOne(
-          { _id: value._id },
-          {
-            $inc: {
-              moneyBalance: calculateCost(data.content + result[0].content),
-            },
-          }
-        );
 
         return result.reverse();
       });
