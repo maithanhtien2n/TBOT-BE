@@ -21,20 +21,24 @@ const AI_ERROR = {
 };
 
 const calculateCost = async ({ accountId, text, pricePerToken = 2 }) => {
-  const tokens = text.split(/\s+/);
-  const numTokens = tokens.length;
-  const cost = numTokens * pricePerToken;
+  try {
+    const tokens = text.split(/\s+/);
+    const numTokens = tokens.length;
+    const cost = numTokens * pricePerToken;
 
-  await Account.updateOne(
-    { _id: accountId },
-    { $inc: { moneyBalance: -cost } }
-  );
+    await Account.updateOne(
+      { _id: accountId },
+      { $inc: { moneyBalance: -cost } }
+    );
+  } catch (error) {
+    throw error;
+  }
 };
 
 module.exports = {
   chatBot: async ({ accountId, threadId, userMessage, assistantId }) => {
     try {
-      if (!accountId || !threadId || !userMessage || assistantId) {
+      if (!accountId || !threadId || !userMessage || !assistantId) {
         return null;
       }
 
@@ -72,11 +76,12 @@ module.exports = {
       });
       await calculateCost({
         accountId,
-        text: result.content,
+        text: result[0].content,
       });
 
       return result;
     } catch (error) {
+      console.log(error);
       throw AI_ERROR;
     }
   },

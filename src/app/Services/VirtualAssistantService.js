@@ -36,7 +36,7 @@ module.exports = {
           assistantId: assistant.assistantId,
         });
 
-        return result.reverse();
+        return result?.reverse();
       });
     } catch (error) {
       throw error;
