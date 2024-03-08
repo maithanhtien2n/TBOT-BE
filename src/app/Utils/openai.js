@@ -3,8 +3,9 @@ require("dotenv").config();
 const OpenAI = require("openai");
 const {
   throwError,
-  convertTimestampToDateTimeString,
+  formatDate,
   onRenderPath,
+  convertTimestampToDateTimeString,
 } = require("./index");
 
 const { Account } = require("../Models/Account");
@@ -320,7 +321,12 @@ module.exports = {
         text: response.choices[0].message.content,
       });
 
-      return response.choices[0].message;
+      const result = {
+        ...response.choices[0].message,
+        createdAt: formatDate(new Date(), true),
+      };
+
+      return result;
     } catch (error) {
       throw AI_ERROR;
     }
