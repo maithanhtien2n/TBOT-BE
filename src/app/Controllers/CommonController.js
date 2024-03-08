@@ -51,6 +51,7 @@ module.exports = (app, io) => {
   onApiOpenFile("/image");
   onApiOpenFile("/notification");
   onApiOpenFile("/audio");
+  onApiOpenFile("/bot-versatile");
 
   // Api lấy danh sách name file audio
   onRoute(
