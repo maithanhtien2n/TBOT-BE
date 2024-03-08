@@ -55,8 +55,21 @@ module.exports = (app) => {
         onResponse(res, null).badRequest(error);
       }
     },
-    "NO_AUTH"
+    "ADMIN"
   );
+
+  // API lấy danh sách mẫu bot đa năng cho người dùng
+  onRoute("put", "/dropdown", async (req, res) => {
+    try {
+      // Hàm xử lý logic và trả ra kết quả
+      const result = await botVersatileService.getDropdown();
+
+      // Hàm trả về response cho người dùng
+      onResponse(res, result).ok({ sttValue: "Lấy dữ liệu thành công!" });
+    } catch (error) {
+      onResponse(res, null).badRequest(error);
+    }
+  });
 
   onRoute(
     "get",
@@ -72,7 +85,7 @@ module.exports = (app) => {
         onResponse(res, null).badRequest(error);
       }
     },
-    "NO_AUTH"
+    "ADMIN"
   );
 
   onRoute(
@@ -101,7 +114,7 @@ module.exports = (app) => {
         onResponse(res, null).badRequest(error);
       }
     },
-    "NO_AUTH"
+    "ADMIN"
   );
 
   onRoute(
@@ -122,6 +135,6 @@ module.exports = (app) => {
         onResponse(res, null).badRequest(error);
       }
     },
-    "NO_AUTH"
+    "ADMIN"
   );
 };

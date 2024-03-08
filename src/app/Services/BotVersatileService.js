@@ -2,7 +2,11 @@ require("dotenv").config();
 
 const { botVersatile, calculateCost } = require("../Utils/openai");
 
-const { throwError, convertToStringKeySearch } = require("../Utils/index");
+const {
+  throwError,
+  convertToStringKeySearch,
+  cloneObjectWithoutFields,
+} = require("../Utils/index");
 const { getById, uploadFile } = require("./CommonService");
 
 const { BotVersatile } = require("../Models/BotVersatile");
@@ -82,6 +86,21 @@ module.exports = {
             ),
           };
       }
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  getDropdown: async () => {
+    try {
+      const dropdown = (await BotVersatile.find()).map((item) => ({
+        _id: item?._id,
+        image: item?.image,
+        name: item?.name,
+        createdAt: item?.createdAt,
+        updatedAt: item?.updatedAt,
+      }));
+      return dropdown;
     } catch (error) {
       throw error;
     }
