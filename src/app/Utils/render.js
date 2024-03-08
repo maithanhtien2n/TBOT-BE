@@ -13,7 +13,6 @@ module.exports = {
   },
 
   convertToStringKeySearch: (keySearch) => {
-    console.log(keySearch);
     if (typeof keySearch !== "string") {
       return "";
     }

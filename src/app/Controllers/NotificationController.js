@@ -21,6 +21,7 @@ module.exports = (app) => {
     async (req, res) => {
       try {
         const { tab, keySearch } = req.query;
+
         // Hàm xử lý logic và trả ra kết quả
         const result = await notificationService.getAllNotificationAdmin({
           tab,

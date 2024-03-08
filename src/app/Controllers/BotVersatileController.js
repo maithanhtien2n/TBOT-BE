@@ -37,4 +37,91 @@ module.exports = (app) => {
       onResponse(res, null).badRequest(error);
     }
   });
+
+  // API lấy danh sách mẫu bot đa năng
+  onRoute(
+    "get",
+    "",
+    async (req, res) => {
+      try {
+        const { tab, keySearch } = req.query;
+
+        // Hàm xử lý logic và trả ra kết quả
+        const result = await botVersatileService.getAll({ tab, keySearch });
+
+        // Hàm trả về response cho người dùng
+        onResponse(res, result).ok({ sttValue: "Lấy dữ liệu thành công!" });
+      } catch (error) {
+        onResponse(res, null).badRequest(error);
+      }
+    },
+    "NO_AUTH"
+  );
+
+  onRoute(
+    "get",
+    "/:id",
+    async (req, res) => {
+      try {
+        // Hàm xử lý logic và trả ra kết quả
+        const result = await botVersatileService.getOne(req.params.id);
+
+        // Hàm trả về response cho người dùng
+        onResponse(res, result).ok({ sttValue: "Lấy dữ liệu thành công!" });
+      } catch (error) {
+        onResponse(res, null).badRequest(error);
+      }
+    },
+    "NO_AUTH"
+  );
+
+  onRoute(
+    "put",
+    "",
+    async (req, res) => {
+      try {
+        // Các hàm xử lý request
+        const request = checkNullRequest(req.body, [
+          "image",
+          "name",
+          "content",
+          "message",
+          "placeholder",
+        ]); // Yêu cầu phải có các trường này trong body
+
+        // Hàm xử lý logic và trả ra kết quả
+        const result = await botVersatileService.save(req.query.id, {
+          ...request,
+          host: renderHost(req),
+        });
+
+        // Hàm trả về response cho người dùng
+        onResponse(res, result).ok({ sttValue: "Lưu dữ liệu thành công!" });
+      } catch (error) {
+        onResponse(res, null).badRequest(error);
+      }
+    },
+    "NO_AUTH"
+  );
+
+  onRoute(
+    "delete",
+    "",
+    async (req, res) => {
+      try {
+        const request = checkNullRequest(req.body, ["ids"]);
+
+        // Hàm xử lý logic và trả ra kết quả
+        const result = await botVersatileService.delete(request);
+
+        // Hàm trả về response cho người dùng
+        onResponse(res, result).ok({
+          sttValue: `Xóa ${result} dữ liệu thành công!`,
+        });
+      } catch (error) {
+        onResponse(res, null).badRequest(error);
+      }
+    },
+    "NO_AUTH"
+  );
 };
