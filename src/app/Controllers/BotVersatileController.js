@@ -58,19 +58,6 @@ module.exports = (app) => {
     "ADMIN"
   );
 
-  // API lấy danh sách mẫu bot đa năng cho người dùng
-  onRoute("put", "/dropdown", async (req, res) => {
-    try {
-      // Hàm xử lý logic và trả ra kết quả
-      const result = await botVersatileService.getDropdown();
-
-      // Hàm trả về response cho người dùng
-      onResponse(res, result).ok({ sttValue: "Lấy dữ liệu thành công!" });
-    } catch (error) {
-      onResponse(res, null).badRequest(error);
-    }
-  });
-
   onRoute(
     "get",
     "/:id",
@@ -117,6 +104,7 @@ module.exports = (app) => {
     "ADMIN"
   );
 
+  // Api xóa bot mẫu
   onRoute(
     "delete",
     "",
@@ -137,4 +125,30 @@ module.exports = (app) => {
     },
     "ADMIN"
   );
+
+  // API lấy danh sách mẫu bot đa năng cho người dùng
+  onRoute("put", "/dropdown", async (req, res) => {
+    try {
+      // Hàm xử lý logic và trả ra kết quả
+      const result = await botVersatileService.getDropdown();
+
+      // Hàm trả về response cho người dùng
+      onResponse(res, result).ok({ sttValue: "Lấy dữ liệu thành công!" });
+    } catch (error) {
+      onResponse(res, null).badRequest(error);
+    }
+  });
+
+  // Api lấy chi tiết bot mẫu cho người dùng
+  onRoute("put", "/detail", async (req, res) => {
+    try {
+      // Hàm xử lý logic và trả ra kết quả
+      const result = await botVersatileService.getDetail(req.query.id);
+
+      // Hàm trả về response cho người dùng
+      onResponse(res, result).ok({ sttValue: "Lấy dữ liệu thành công!" });
+    } catch (error) {
+      onResponse(res, null).badRequest(error);
+    }
+  });
 };

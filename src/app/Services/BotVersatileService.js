@@ -91,21 +91,6 @@ module.exports = {
     }
   },
 
-  getDropdown: async () => {
-    try {
-      const dropdown = (await BotVersatile.find()).map((item) => ({
-        _id: item?._id,
-        image: item?.image,
-        name: item?.name,
-        createdAt: item?.createdAt,
-        updatedAt: item?.updatedAt,
-      }));
-      return dropdown;
-    } catch (error) {
-      throw error;
-    }
-  },
-
   getOne: async (id) => {
     try {
       return getById(id, BotVersatile, "mẫu bot", async (value) => {
@@ -145,6 +130,36 @@ module.exports = {
     try {
       const result = await BotVersatile.deleteMany({ _id: { $in: ids } });
       return result.deletedCount + " dòng";
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  getDropdown: async () => {
+    try {
+      const dropdown = (await BotVersatile.find()).map((item) => ({
+        _id: item?._id,
+        image: item?.image,
+        name: item?.name,
+        createdAt: item?.createdAt,
+        updatedAt: item?.updatedAt,
+      }));
+      return dropdown;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  getDetail: async (id) => {
+    try {
+      return getById(id, BotVersatile, "mẫu bot", async (value) => {
+        const result = cloneObjectWithoutFields(value, [
+          "content",
+          "status",
+          "__v",
+        ]);
+        return result;
+      });
     } catch (error) {
       throw error;
     }
