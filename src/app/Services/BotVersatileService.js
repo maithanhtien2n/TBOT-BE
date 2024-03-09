@@ -33,8 +33,8 @@ module.exports = {
   getAll: async ({ tab = "ALL", keySearch = "" }) => {
     try {
       const all = (await BotVersatile.find()).reverse();
-      const active = all.filter(({ status }) => status === "ACTIVE");
       const draft = all.filter(({ status }) => status === "DRAFT");
+      const active = all.filter(({ status }) => status === "ACTIVE");
       const locked = all.filter(({ status }) => status === "LOCKED");
 
       const onFilter = (name, content, search) => {
@@ -54,24 +54,24 @@ module.exports = {
             all: all.filter(({ name, content }) =>
               onFilter(name, content, keySearch)
             ),
+            draft,
             active,
-            draft,
-            locked,
-          };
-        case "ACTIVE":
-          return {
-            all,
-            active: active.filter(({ name, content }) =>
-              onFilter(name, content, keySearch)
-            ),
-            draft,
             locked,
           };
         case "DRAFT":
           return {
             all,
-            active,
             draft: draft.filter(({ name, content }) =>
+              onFilter(name, content, keySearch)
+            ),
+            active,
+            locked,
+          };
+        case "ACTIVE":
+          return {
+            all,
+            draft,
+            active: active.filter(({ name, content }) =>
               onFilter(name, content, keySearch)
             ),
             locked,
@@ -79,8 +79,8 @@ module.exports = {
         case "LOCKED":
           return {
             all,
-            active,
             draft,
+            active,
             locked: locked.filter(({ name, content }) =>
               onFilter(name, content, keySearch)
             ),
