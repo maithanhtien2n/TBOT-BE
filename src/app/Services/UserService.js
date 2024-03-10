@@ -108,11 +108,12 @@ module.exports = {
 
   saveUser: async (data) => {
     try {
+      console.log(data.host);
       const userId = (await User.findOne({ accountId: data.accountId }))._id;
 
       const fieldImage = "avatar";
       let infoData = { ...data };
-      if (!data[fieldImage] || data[fieldImage].base64.includes("https")) {
+      if (!data[fieldImage] || data[fieldImage].base64.includes("http")) {
         infoData.avatar = null;
       }
 

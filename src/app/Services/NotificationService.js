@@ -150,7 +150,7 @@ module.exports = {
       if (
         !data[fieldImage] ||
         !data[fieldImage]?.base64 ||
-        data[fieldImage]?.base64?.includes("https")
+        data[fieldImage]?.base64?.includes("http")
       ) {
         infoData.image = null;
       }
