@@ -307,7 +307,7 @@ module.exports = {
         model: GPT_VERSION,
         messages,
         temperature: 0.7,
-        max_tokens: 64,
+        max_tokens: 3000,
         top_p: 1,
       });
 
