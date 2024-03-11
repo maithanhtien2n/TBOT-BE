@@ -132,15 +132,23 @@ module.exports = {
 
   updateStatusAccount: async ({ ids, status }) => {
     try {
+      if (!["ACTIVE", "LOCKED"].includes(status)) {
+        throwError(
+          "ERROR_FORMAT_STATUS_CODE",
+          "Lỗi mã trạng thái không đúng định dạng!"
+        );
+      }
+
       if (!ids.length) {
         return ids.length + " dòng";
       }
 
-      for (const id of ids) {
-        await Account.updateOne({ _id: id }, { status });
-      }
+      const result = await Account.updateMany(
+        { _id: { $in: ids } },
+        { $set: { status } }
+      );
 
-      return ids.length + " dòng";
+      return result.matchedCount + " dòng";
     } catch (error) {
       throw error;
     }

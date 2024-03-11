@@ -126,6 +126,29 @@ module.exports = (app) => {
     "ADMIN"
   );
 
+  // API cập trạng thái mâu bot
+  onRoute(
+    "put",
+    "/update-status",
+    async (req, res) => {
+      try {
+        // Các hàm xử lý request
+        const request = checkNullRequest(req.body, ["ids", "status"]);
+
+        // Hàm xử lý logic và trả ra kết quả
+        const result = await botVersatileService.updateStatus(request);
+
+        // Hàm trả về response cho người dùng
+        onResponse(res, result).ok({
+          sttValue: `Cập nhật ${result} dữ liệu thành công!`,
+        });
+      } catch (error) {
+        onResponse(res, null).badRequest(error);
+      }
+    },
+    "ADMIN"
+  );
+
   // API lấy danh sách mẫu bot đa năng cho người dùng
   onRoute("put", "/dropdown", async (req, res) => {
     try {

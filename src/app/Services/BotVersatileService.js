@@ -135,15 +135,40 @@ module.exports = {
     }
   },
 
+  updateStatus: async ({ ids, status }) => {
+    try {
+      if (!["DRAFT", "ACTIVE", "LOCKED"].includes(status)) {
+        throwError(
+          "ERROR_FORMAT_STATUS_CODE",
+          "Lỗi mã trạng thái không đúng định dạng!"
+        );
+      }
+      if (!ids.length) {
+        return ids.length + " dòng";
+      }
+
+      const result = await BotVersatile.updateMany(
+        { _id: { $in: ids } },
+        { $set: { status } }
+      );
+
+      return result.matchedCount + " dòng";
+    } catch (error) {
+      throw error;
+    }
+  },
+
   getDropdown: async () => {
     try {
-      const dropdown = (await BotVersatile.find()).map((item) => ({
-        _id: item?._id,
-        image: item?.image,
-        name: item?.name,
-        createdAt: item?.createdAt,
-        updatedAt: item?.updatedAt,
-      }));
+      const dropdown = (await BotVersatile.find({ status: "ACTIVE" })).map(
+        (item) => ({
+          _id: item?._id,
+          image: item?.image,
+          name: item?.name,
+          createdAt: item?.createdAt,
+          updatedAt: item?.updatedAt,
+        })
+      );
       return dropdown;
     } catch (error) {
       throw error;
