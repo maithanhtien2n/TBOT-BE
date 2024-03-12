@@ -297,11 +297,18 @@ module.exports = {
     }
   },
 
-  botVersatile: async ({ accountId = null, messages = [] }) => {
+  botVersatile: async ({
+    accountId = null,
+    messages = [],
+    typeResponse = "text",
+    host,
+  }) => {
     try {
       if (!accountId || !messages.length) {
         return null;
       }
+
+      let result = null;
 
       const response = await openai.chat.completions.create({
         model: GPT_VERSION,
@@ -321,10 +328,37 @@ module.exports = {
         text: response.choices[0].message.content,
       });
 
-      const result = {
-        ...response.choices[0].message,
-        createdAt: formatDate(new Date(), true),
-      };
+      if (typeResponse === "text") {
+        result = {
+          type: typeResponse,
+          result: {
+            ...response.choices[0].message,
+            createdAt: formatDate(new Date(), true),
+          },
+        };
+      } else if (typeResponse === "audio") {
+        const speechFile = onRenderPath("audio", "speech.mp3");
+        const input = response.choices[0].message.content;
+
+        const mp3 = await openai.audio.speech.create({
+          model: "tts-1",
+          voice: "alloy", // alloy, echo, fable, onyx, nova, and shimmer
+          input,
+        });
+
+        const buffer = Buffer.from(await mp3.arrayBuffer());
+        await fs.promises.writeFile(speechFile, buffer);
+
+        await calculateCost({
+          accountId,
+          text: input,
+        });
+
+        result = {
+          type: typeResponse,
+          result: `${host}/${speechFile}`,
+        };
+      }
 
       return result;
     } catch (error) {

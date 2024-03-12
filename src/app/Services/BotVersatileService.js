@@ -12,7 +12,13 @@ const { getById, uploadFile } = require("./CommonService");
 const { BotVersatile } = require("../Models/BotVersatile");
 
 module.exports = {
-  sendMessage: async ({ botVersatileId, messages, accountId }) => {
+  sendMessage: async ({
+    botVersatileId,
+    messages,
+    typeResponse,
+    accountId,
+    host,
+  }) => {
     try {
       return getById(botVersatileId, BotVersatile, "mẫu bot", async (value) => {
         const result = await botVersatile({
@@ -21,6 +27,8 @@ module.exports = {
             ...[{ role: "system", content: value.content }],
             ...messages,
           ],
+          typeResponse,
+          host,
         });
 
         return result;

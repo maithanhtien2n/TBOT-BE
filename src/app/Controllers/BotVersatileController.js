@@ -27,6 +27,7 @@ module.exports = (app) => {
       const result = await botVersatileService.sendMessage({
         ...request,
         accountId: req.headers.accountid,
+        host: renderHost(req),
       });
 
       // Hàm trả về response cho người dùng
