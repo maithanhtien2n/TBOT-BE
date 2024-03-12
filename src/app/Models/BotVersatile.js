@@ -10,6 +10,7 @@ const BotVersatile = mongoose.model(
       content: { type: String, require: true },
       message: { type: String, require: true },
       placeholder: { type: String, require: true },
+      type: { type: String, require: false, default: "TEXT" },
       status: { type: String, require: false, default: "DRAFT" },
     },
     { timestamps: true }

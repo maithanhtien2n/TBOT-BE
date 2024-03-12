@@ -111,6 +111,10 @@ module.exports = {
 
   save: async (id, data) => {
     try {
+      if (!["TEXT", "AUDIO"].includes(data.type)) {
+        throwError("ERROR_FORMAT", "Lỗi code không đúng định dạng!");
+      }
+
       const fieldImage = "image";
       let infoData = { ...data };
       if (
