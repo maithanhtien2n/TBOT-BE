@@ -1,6 +1,10 @@
 const format = require("./format");
 const render = require("./render");
 const { ObjectId } = require("mongodb");
+const speech = require("@google-cloud/speech");
+
+process.env.GOOGLE_APPLICATION_CREDENTIALS =
+  __dirname + "/tbotai-415510-74840224582b.json";
 
 module.exports = {
   ...format,
@@ -78,5 +82,36 @@ module.exports = {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     return emailRegex.test(email);
+  },
+
+  audioToText: async (base64String) => {
+    const client = new speech.SpeechClient();
+
+    // Tạo một buffer từ base64 string
+    const audioBytes = Buffer.from(base64String, "base64");
+
+    try {
+      // Gửi yêu cầu nhận dạng âm thanh
+      const [response] = await client.recognize({
+        audio: {
+          content: audioBytes,
+        },
+        config: {
+          encoding: "LINEAR16",
+          sampleRateHertz: 16000,
+          languageCode: "vi-VN",
+        },
+      });
+
+      // Lấy kết quả và trả về văn bản
+      const transcription = response.results
+        .map((result) => result.alternatives[0].transcript)
+        .join("\n");
+
+      return transcription;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
   },
 };

@@ -108,7 +108,6 @@ module.exports = {
 
   saveUser: async (data) => {
     try {
-      console.log(data.host);
       const userId = (await User.findOne({ accountId: data.accountId }))._id;
 
       const fieldImage = "avatar";

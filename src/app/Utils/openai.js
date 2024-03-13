@@ -4,6 +4,7 @@ const OpenAI = require("openai");
 const {
   throwError,
   formatDate,
+  audioToText,
   onRenderPath,
   convertTimestampToDateTimeString,
 } = require("./index");
@@ -309,10 +310,33 @@ module.exports = {
       }
 
       let result = null;
+      let messagesClone = [];
+
+      // Xử lý đầu vào
+      if (typeResponse === "text") {
+        messagesClone = messages;
+      } else if (typeResponse === "audio") {
+        const base64Data = messages[messages.length - 1]?.content
+          .split(";base64,")
+          .pop();
+        const transcription = await audioToText(base64Data);
+        console.log(transcription);
+        messagesClone = messages.map((item, i, arr) => {
+          if (i === arr.length - 1) {
+            return {
+              role: item.role,
+              content: transcription || "",
+            };
+          } else {
+            return item;
+          }
+        });
+      }
+      // ---------------------------------
 
       const response = await openai.chat.completions.create({
         model: GPT_VERSION,
-        messages,
+        messages: messagesClone,
         temperature: 0.7,
         max_tokens: 3000,
         top_p: 1,
@@ -328,6 +352,7 @@ module.exports = {
         text: response.choices[0].message.content,
       });
 
+      // Xử lý đầu ra
       if (typeResponse === "text") {
         result = {
           type: typeResponse,
@@ -354,11 +379,21 @@ module.exports = {
           text: input,
         });
 
-        result = {
-          type: typeResponse,
-          result: `${host}/${speechFile}`,
-        };
+        result = [
+          {
+            type: "text",
+            result: messagesClone.pop(),
+          },
+          {
+            type: typeResponse,
+            result: {
+              role: "assistant",
+              content: `${host}/${speechFile}`,
+            },
+          },
+        ];
       }
+      // ---------------------------------
 
       return result;
     } catch (error) {
