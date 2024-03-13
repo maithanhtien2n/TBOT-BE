@@ -97,7 +97,7 @@ module.exports = {
           content: audioBytes,
         },
         config: {
-          encoding: "WAV",
+          encoding: "MP3",
           sampleRateHertz: 16000,
           languageCode: "vi-VN",
         },
