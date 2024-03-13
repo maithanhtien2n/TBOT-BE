@@ -4,7 +4,7 @@ const { ObjectId } = require("mongodb");
 const speech = require("@google-cloud/speech");
 
 process.env.GOOGLE_APPLICATION_CREDENTIALS =
-  __dirname + "/tbotai-415510-74840224582b.json";
+  __dirname + "/tienthanh-411409-97c6cfd167f0.json";
 
 module.exports = {
   ...format,
@@ -97,7 +97,7 @@ module.exports = {
           content: audioBytes,
         },
         config: {
-          encoding: "LINEAR16",
+          encoding: "MP3",
           sampleRateHertz: 16000,
           languageCode: "vi-VN",
         },
@@ -107,6 +107,8 @@ module.exports = {
       const transcription = response.results
         .map((result) => result.alternatives[0].transcript)
         .join("\n");
+
+      console.log("kết quả: " + transcription);
 
       return transcription;
     } catch (error) {

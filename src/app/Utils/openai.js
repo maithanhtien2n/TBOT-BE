@@ -320,7 +320,6 @@ module.exports = {
           .split(";base64,")
           .pop();
         const transcription = await audioToText(base64Data);
-        console.log(transcription);
         messagesClone = messages.map((item, i, arr) => {
           if (i === arr.length - 1) {
             return {
