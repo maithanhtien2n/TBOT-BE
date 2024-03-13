@@ -33,10 +33,6 @@ module.exports = {
     return otp.toString();
   },
 
-  renderHost: (req) => {
-    return `${req.protocol}://${req.get("host")}`;
-  },
-
   onRenderPath: (folder, fileName) => {
     return `uploads/${folder}/${Date.now()}$${fileName}`;
   },

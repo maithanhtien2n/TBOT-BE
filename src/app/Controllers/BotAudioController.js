@@ -1,9 +1,7 @@
+require("dotenv").config();
+
 module.exports = (app) => {
-  const {
-    onResponse,
-    checkNullRequest,
-    renderHost,
-  } = require("../Utils/index");
+  const { onResponse, checkNullRequest } = require("../Utils/index");
   const { onRouteCustom } = require("../Middlewares/index");
 
   const controllerName = "bot-audio";
@@ -23,7 +21,7 @@ module.exports = (app) => {
       // Hàm xử lý logic và trả ra kết quả
       const result = await botAudioService.convertTextToAudio({
         ...request,
-        host: renderHost(req),
+        host: process.env.HOST_BE,
         accountId: req.headers.accountid,
       });
 

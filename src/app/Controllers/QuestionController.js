@@ -1,9 +1,7 @@
+require("dotenv").config();
+
 module.exports = (app) => {
-  const {
-    onResponse,
-    checkNullRequest,
-    renderHost,
-  } = require("../Utils/index");
+  const { onResponse, checkNullRequest } = require("../Utils/index");
   const { onRouteCustom } = require("../Middlewares/index");
 
   const controllerName = "question";
@@ -89,7 +87,7 @@ module.exports = (app) => {
         const result = await questionService.update({
           questionId: req.params.id,
           ...request,
-          host: renderHost(req),
+          host: process.env.HOST_BE,
         });
 
         // Hàm trả về response cho người dùng

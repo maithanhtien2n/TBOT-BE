@@ -1,9 +1,7 @@
+require("dotenv").config();
+
 module.exports = (app) => {
-  const {
-    onResponse,
-    checkNullRequest,
-    renderHost,
-  } = require("../Utils/index");
+  const { onResponse, checkNullRequest } = require("../Utils/index");
   const { onRouteCustom } = require("../Middlewares/index");
 
   const controllerName = "bot-versatile";
@@ -27,7 +25,7 @@ module.exports = (app) => {
       const result = await botVersatileService.sendMessage({
         ...request,
         accountId: req.headers.accountid,
-        host: renderHost(req),
+        host: process.env.HOST_BE,
       });
 
       // Hàm trả về response cho người dùng
@@ -93,7 +91,7 @@ module.exports = (app) => {
         // Hàm xử lý logic và trả ra kết quả
         const result = await botVersatileService.save(req.query.id, {
           ...request,
-          host: renderHost(req),
+          host: process.env.HOST_BE,
         });
 
         // Hàm trả về response cho người dùng

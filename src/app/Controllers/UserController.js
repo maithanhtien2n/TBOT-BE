@@ -1,9 +1,7 @@
+require("dotenv").config();
+
 module.exports = (app) => {
-  const {
-    onResponse,
-    checkNullRequest,
-    renderHost,
-  } = require("../Utils/index");
+  const { onResponse, checkNullRequest } = require("../Utils/index");
   const { onRouteCustom } = require("../Middlewares/index");
 
   const controllerName = "user";
@@ -58,7 +56,7 @@ module.exports = (app) => {
       // Hàm xử lý logic và trả ra kết quả
       const result = await userService.saveUser({
         ...request,
-        host: renderHost(req),
+        host: process.env.HOST_BE,
       });
 
       // Hàm trả về response cho người dùng
@@ -103,7 +101,7 @@ module.exports = (app) => {
         // Hàm xử lý logic và trả ra kết quả
         const result = await userService.updateMoneyBalanceUser({
           ...request,
-          host: renderHost(req),
+          host: process.env.HOST_BE,
         });
 
         // Hàm trả về response cho người dùng
