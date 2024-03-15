@@ -79,6 +79,7 @@ module.exports = {
       await calculateCost({
         accountId,
         text: result[0].content,
+        pricePerToken: 2,
       });
 
       return result;
@@ -251,13 +252,14 @@ module.exports = {
       const response = await openai.images.generate({
         model: "dall-e-2",
         prompt,
-        n: 2,
         size: "1024x1024",
+        quality: "hd",
+        n: 1,
       });
 
       await Account.updateOne(
         { _id: accountId },
-        { $inc: { moneyBalance: -100 } }
+        { $inc: { moneyBalance: -2500 } }
       );
 
       return response.data;
@@ -290,6 +292,7 @@ module.exports = {
       await calculateCost({
         accountId,
         text: input,
+        pricePerToken: 1,
       });
 
       return speechFile;
@@ -349,6 +352,7 @@ module.exports = {
       await calculateCost({
         accountId,
         text: response.choices[0].message.content,
+        pricePerToken: 2,
       });
 
       // Xử lý đầu ra
@@ -376,6 +380,7 @@ module.exports = {
         await calculateCost({
           accountId,
           text: input,
+          pricePerToken: 1,
         });
 
         result = [
