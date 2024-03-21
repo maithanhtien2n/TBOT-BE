@@ -8,10 +8,10 @@ const { getById } = require("./CommonService");
 module.exports = {
   createImage: async ({ accountId, prompt }) => {
     try {
-      const content = await createImage({ accountId, prompt });
+      const resultImages = await createImage({ accountId, prompt });
       const result = {
         role: "assistant",
-        content,
+        images: resultImages,
         createdAt: formatDate(new Date(), true),
       };
       return result;

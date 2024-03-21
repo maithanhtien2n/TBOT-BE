@@ -1,6 +1,7 @@
 require("dotenv").config();
 
-const { botVersatile, calculateCost } = require("../Utils/openai");
+const { botVersatile } = require("../Utils/openai");
+const { renderVideo } = require("../Utils/videoai");
 
 const {
   throwError,
@@ -12,24 +13,29 @@ const { getById, uploadFile } = require("./CommonService");
 const { BotVersatile } = require("../Models/BotVersatile");
 
 module.exports = {
-  sendMessage: async ({
-    botVersatileId,
-    messages,
-    typeResponse,
-    accountId,
-    host,
-  }) => {
+  sendMessage: async ({ botVersatileId, messages, accountId, host }) => {
     try {
       return getById(botVersatileId, BotVersatile, "mẫu bot", async (value) => {
-        const result = await botVersatile({
-          accountId,
-          messages: [
-            ...[{ role: "system", content: value.content }],
-            ...messages,
-          ],
-          typeResponse,
-          host,
-        });
+        let result = null;
+        if (["TEXT", "AUDIO"].includes(value?.type)) {
+          result = await botVersatile({
+            accountId,
+            messages: [
+              ...[{ role: "system", content: value.content }],
+              ...messages,
+            ],
+            typeResponse: value?.type,
+            host,
+          });
+        }
+
+        if (["VIDEO"].includes(value?.type)) {
+          result = await renderVideo({
+            accountId,
+            messages,
+            systemBotVideo: value?.content,
+          });
+        }
 
         return result;
       });
@@ -111,7 +117,7 @@ module.exports = {
 
   save: async (id, data) => {
     try {
-      if (!["TEXT", "AUDIO"].includes(data.type)) {
+      if (!["TEXT", "AUDIO", "VIDEO"].includes(data.type)) {
         throwError("ERROR_FORMAT", "Lỗi code không đúng định dạng!");
       }
 

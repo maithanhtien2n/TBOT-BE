@@ -10,24 +10,6 @@ module.exports = (app, io) => {
   // Service import
   const commonService = require("../Services/CommonService");
 
-  // API mở file ảnh hoặc video
-  const onApiOpenFile = (folderName = "") => {
-    app.get(`/uploads${folderName}/:name`, (req, res) => {
-      const fileName = req.params.name;
-      const options = {
-        root: `uploads${folderName}`,
-        headers: {
-          "Content-Type": getFileContentType(fileName),
-        },
-      };
-      res.sendFile(fileName, options, (error) => {
-        if (error) {
-          onResponse(res, null).badRequest(error);
-        }
-      });
-    });
-  };
-
   const getFileContentType = (fileName) => {
     const fileExtension = fileName.split(".").pop().toLowerCase();
 
@@ -46,12 +28,32 @@ module.exports = (app, io) => {
     }
   };
 
+  // API mở file ảnh hoặc video
+  const onApiOpenFile = (folderName = "") => {
+    app.get(`/uploads${folderName}/:name`, (req, res) => {
+      const fileName = req.params.name;
+      const options = {
+        root: `uploads${folderName}`,
+        headers: {
+          "Content-Type": getFileContentType(fileName),
+        },
+      };
+
+      try {
+        res.sendFile(fileName, options);
+      } catch (error) {
+        onResponse(res, null).badRequest(error);
+      }
+    });
+  };
+
   // Register routes for different folders
   onApiOpenFile("/avatar");
   onApiOpenFile("/image");
   onApiOpenFile("/notification");
   onApiOpenFile("/audio");
   onApiOpenFile("/bot-versatile");
+  onApiOpenFile("/video");
 
   // Api lấy danh sách name file audio
   onRoute(

@@ -11,7 +11,7 @@ module.exports = {
       const content = await convertTextToSpeech({ accountId, input });
       const result = {
         role: "assistant",
-        content: `${host}/${content}`,
+        audio: `${host}/${content}`,
         createdAt: formatDate(new Date(), true),
       };
       return result;

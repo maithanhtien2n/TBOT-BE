@@ -243,7 +243,7 @@ module.exports = {
     return fileInfoArray;
   },
 
-  createImage: async ({ accountId, prompt }) => {
+  createImage: async ({ accountId, prompt, quantity = 1 }) => {
     try {
       if (!accountId || !prompt) {
         return null;
@@ -253,18 +253,18 @@ module.exports = {
         model: "dall-e-2",
         prompt,
         size: "1024x1024",
-        quality: "hd",
-        n: 1,
+        quality: "standard",
+        n: quantity,
       });
 
       await Account.updateOne(
         { _id: accountId },
-        { $inc: { moneyBalance: -2500 } }
+        { $inc: { moneyBalance: -2500 * quantity } }
       );
 
       return response.data;
     } catch (error) {
-      throw AI_ERROR;
+      throw error;
     }
   },
 
@@ -297,15 +297,16 @@ module.exports = {
 
       return speechFile;
     } catch (error) {
-      throw AI_ERROR;
+      throw error;
     }
   },
 
   botVersatile: async ({
     accountId = null,
     messages = [],
-    typeResponse = "text",
+    typeResponse = "TEXT",
     host,
+    dateTime = true,
   }) => {
     try {
       if (!accountId || !messages.length) {
@@ -316,9 +317,9 @@ module.exports = {
       let messagesClone = [];
 
       // Xử lý đầu vào
-      if (typeResponse === "text") {
+      if (typeResponse === "TEXT") {
         messagesClone = messages;
-      } else if (typeResponse === "audio") {
+      } else if (typeResponse === "AUDIO") {
         const base64Data = messages[messages.length - 1]?.content
           .split(";base64,")
           .pop();
@@ -356,15 +357,13 @@ module.exports = {
       });
 
       // Xử lý đầu ra
-      if (typeResponse === "text") {
+      if (typeResponse === "TEXT") {
         result = {
           type: typeResponse,
-          result: {
-            ...response.choices[0].message,
-            createdAt: formatDate(new Date(), true),
-          },
+          result: { ...response.choices[0].message },
         };
-      } else if (typeResponse === "audio") {
+        if (dateTime) result.result.createdAt = formatDate(new Date(), true);
+      } else if (typeResponse === "AUDIO") {
         const speechFile = onRenderPath("audio", "speech.mp3");
         const input = response.choices[0].message.content;
 
@@ -385,7 +384,7 @@ module.exports = {
 
         result = [
           {
-            type: "text",
+            type: "TEXT",
             result: messagesClone.pop(),
           },
           {
@@ -401,7 +400,7 @@ module.exports = {
 
       return result;
     } catch (error) {
-      throw AI_ERROR;
+      throw error;
     }
   },
 };
