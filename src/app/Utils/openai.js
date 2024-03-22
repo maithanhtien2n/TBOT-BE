@@ -15,22 +15,48 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY.replace(/@/g, ""),
 });
 
-const GPT_VERSION = "gpt-3.5-turbo";
+const GPT_DEFAULT = "gpt-3.5-turbo";
+const DALL_DEFAULT = "dall-e-2";
+const TTS_DEFAULT = "tts-1";
 
 const AI_ERROR = {
   sttCode: "AI_ERROR",
   sttValue: "AI đã bị kiệt sức, vui lòng thử lại trong giây lác!",
 };
 
-const calculateCost = async ({ accountId, text, pricePerToken = 2 }) => {
+const calculateCost = async ({
+  accountId = null,
+  text = "",
+  model = "gpt-3.5-turbo",
+  type = "output",
+}) => {
   try {
+    let totalAmount = 0;
+
     const tokens = text.split(/\s+/);
     const numTokens = tokens.length;
-    const cost = numTokens * pricePerToken;
+
+    switch (model) {
+      case "gpt-3.5-turbo":
+      case "tts-1":
+        totalAmount = type === "input" ? 0.5 : 1 * numTokens;
+        break;
+      case "dall-e-2":
+        totalAmount = 1000;
+        break;
+      case "gpt-4-vision-preview":
+        totalAmount = type === "input" ? 1 : 2 * numTokens;
+        break;
+      case "dall-e-3":
+        totalAmount = 2000;
+        break;
+    }
+
+    console.log(totalAmount);
 
     await Account.updateOne(
       { _id: accountId },
-      { $inc: { moneyBalance: -cost } }
+      { $inc: { moneyBalance: -totalAmount } }
     );
   } catch (error) {
     throw error;
@@ -74,17 +100,19 @@ module.exports = {
       await calculateCost({
         accountId,
         text: userMessage,
-        pricePerToken: 1,
+        model: run.model,
+        type: "input",
       });
       await calculateCost({
         accountId,
         text: result[0].content,
-        pricePerToken: 2,
+        model: run.model,
+        type: "output",
       });
 
       return result;
     } catch (error) {
-      throw AI_ERROR;
+      throw error;
     }
   },
 
@@ -102,7 +130,13 @@ module.exports = {
     }
   },
 
-  saveAssistant: async ({ id = null, name, instructions, files = [] }) => {
+  saveAssistant: async ({
+    id = null,
+    name,
+    instructions,
+    files = [],
+    model = GPT_DEFAULT,
+  }) => {
     try {
       let assistant;
       let fileIds = [];
@@ -158,7 +192,7 @@ module.exports = {
             name,
             instructions,
             tools: [{ type: "code_interpreter" }],
-            model: GPT_VERSION,
+            model,
             file_ids: fileIds,
           });
         } catch (error) {
@@ -170,7 +204,7 @@ module.exports = {
             name,
             instructions,
             tools: [{ type: "code_interpreter" }],
-            model: GPT_VERSION,
+            model,
             file_ids: fileIds,
           });
         } catch (error) {
@@ -243,24 +277,27 @@ module.exports = {
     return fileInfoArray;
   },
 
-  createImage: async ({ accountId, prompt, quantity = 1 }) => {
+  createImage: async ({
+    accountId,
+    model = DALL_DEFAULT,
+    prompt = "",
+    quality = "standard",
+    quantity = 1,
+  }) => {
     try {
       if (!accountId || !prompt) {
         return null;
       }
 
       const response = await openai.images.generate({
-        model: "dall-e-2",
+        model,
         prompt,
-        size: "1024x1024",
-        quality: "standard",
+        quality,
         n: quantity,
+        size: "1024x1024",
       });
 
-      await Account.updateOne(
-        { _id: accountId },
-        { $inc: { moneyBalance: -2500 * quantity } }
-      );
+      await calculateCost({ accountId, model });
 
       return response.data;
     } catch (error) {
@@ -270,8 +307,9 @@ module.exports = {
 
   convertTextToSpeech: async ({
     accountId = null,
-    input = null,
+    model = TTS_DEFAULT,
     voice = "alloy",
+    input = "",
   }) => {
     try {
       if (!accountId || !input) {
@@ -281,7 +319,7 @@ module.exports = {
       const speechFile = onRenderPath("audio", "speech.mp3");
 
       const mp3 = await openai.audio.speech.create({
-        model: "tts-1",
+        model,
         voice, // alloy, echo, fable, onyx, nova, and shimmer
         input,
       });
@@ -292,7 +330,8 @@ module.exports = {
       await calculateCost({
         accountId,
         text: input,
-        pricePerToken: 1,
+        model,
+        type: "output",
       });
 
       return speechFile;
@@ -303,6 +342,7 @@ module.exports = {
 
   botVersatile: async ({
     accountId = null,
+    model = GPT_DEFAULT,
     messages = [],
     typeResponse = "TEXT",
     host,
@@ -338,7 +378,7 @@ module.exports = {
       // ---------------------------------
 
       const response = await openai.chat.completions.create({
-        model: GPT_VERSION,
+        model,
         messages: messagesClone,
         temperature: 0.7,
         max_tokens: 3000,
@@ -348,12 +388,14 @@ module.exports = {
       await calculateCost({
         accountId,
         text: messages[messages.length - 1].content,
-        pricePerToken: 1,
+        model,
+        type: "input",
       });
       await calculateCost({
         accountId,
         text: response.choices[0].message.content,
-        pricePerToken: 2,
+        model,
+        type: "output",
       });
 
       // Xử lý đầu ra
@@ -379,7 +421,8 @@ module.exports = {
         await calculateCost({
           accountId,
           text: input,
-          pricePerToken: 1,
+          model,
+          type: "input",
         });
 
         result = [

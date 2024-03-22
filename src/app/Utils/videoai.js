@@ -9,7 +9,6 @@ const { throwError, onRenderPath, formatDate } = require("./index");
 const { downloadImages, deleteFiles } = require("./dowload");
 
 const { botVersatile, createImage, convertTextToSpeech } = require("./openai");
-const { systemBotVideo } = require("./data");
 
 const HOST = process.env.HOST_BE;
 
