@@ -6,6 +6,7 @@ const {
   formatToVND,
 } = require("../Utils/index");
 const { uploadFile, getById } = require("./CommonService");
+const { saveTrain } = require("./VirtualAssistantService");
 
 const { Account } = require("../Models/Account");
 const { User } = require("../Models/User");
@@ -93,7 +94,8 @@ module.exports = {
         }).populate({
           path: "accountId",
           model: Account,
-          select: "email moneyBalance role status createdAt updatedAt",
+          select:
+            "email isUpgrade moneyBalance role status createdAt updatedAt",
         });
 
         return [accountInfo].map((item) => ({
@@ -238,6 +240,15 @@ module.exports = {
       }
 
       return ids.length + " dòng";
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  changeModel: async ({ accountId, isUpgrade }) => {
+    try {
+      const result = await Account.updateOne({ _id: accountId }, { isUpgrade });
+      return result;
     } catch (error) {
       throw error;
     }

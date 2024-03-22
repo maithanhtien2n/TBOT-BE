@@ -91,6 +91,32 @@ module.exports = (app, io) => {
     "NO_AUTH"
   );
 
+  // API lấy danh sách mẫu bot đa năng cho người dùng
+  onRoute("put", "/bot-versatile", async (req, res) => {
+    try {
+      // Hàm xử lý logic và trả ra kết quả
+      const result = await commonService.botVersatile();
+
+      // Hàm trả về response cho người dùng
+      onResponse(res, result).ok({ sttValue: "Lấy dữ liệu thành công!" });
+    } catch (error) {
+      onResponse(res, null).badRequest(error);
+    }
+  });
+
+  // Api lấy chi tiết bot mẫu cho người dùng
+  onRoute("put", "/bot-versatile-detail", async (req, res) => {
+    try {
+      // Hàm xử lý logic và trả ra kết quả
+      const result = await commonService.botVersatileDetail(req.query.id);
+
+      // Hàm trả về response cho người dùng
+      onResponse(res, result).ok({ sttValue: "Lấy dữ liệu thành công!" });
+    } catch (error) {
+      onResponse(res, null).badRequest(error);
+    }
+  });
+
   // Socket.io -------------------------------------------
 
   io.on("connection", (socket) => {

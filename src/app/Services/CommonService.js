@@ -1,8 +1,10 @@
 const fs = require("fs");
 require("dotenv").config();
 
-const { throwError } = require("../Utils/index");
+const { throwError, cloneObjectWithoutFields } = require("../Utils/index");
 const { default: mongoose } = require("mongoose");
+
+const { BotVersatile } = require("../Models/BotVersatile");
 
 function readDirectory(directoryPath) {
   return new Promise((resolve, reject) => {
@@ -15,6 +17,19 @@ function readDirectory(directoryPath) {
     });
   });
 }
+
+const getById = async (id, model, msg, next = () => {}) => {
+  if (mongoose.Types.ObjectId.isValid(id)) {
+    const tool = await model.findById(id);
+    if (tool) {
+      return next(tool);
+    } else {
+      throwError("NOT_FOUND", `Không tìm thấy ${msg} có id là: ${id}`);
+    }
+  } else {
+    throwError("ID_INVALID", `ID không hợp lệ: ${id}`);
+  }
+};
 
 module.exports = {
   uploadFile: async (
@@ -126,6 +141,38 @@ module.exports = {
         }
       }
       return "Đã xóa tất cả file audio!";
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  botVersatile: async () => {
+    try {
+      const dropdown = (await BotVersatile.find({ status: "ACTIVE" })).map(
+        (item) => ({
+          _id: item?._id,
+          image: item?.image,
+          name: item?.name,
+          createdAt: item?.createdAt,
+          updatedAt: item?.updatedAt,
+        })
+      );
+      return dropdown;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  botVersatileDetail: async (id) => {
+    try {
+      return getById(id, BotVersatile, "mẫu bot", async (value) => {
+        const result = cloneObjectWithoutFields(value, [
+          "content",
+          "status",
+          "__v",
+        ]);
+        return result;
+      });
     } catch (error) {
       throw error;
     }

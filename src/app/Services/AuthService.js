@@ -41,7 +41,7 @@ module.exports = {
 
   login: async ({ email, password }) => {
     try {
-      const account = await Account.findOne({ email });
+      let account = await Account.findOne({ email });
 
       if (
         !account ||
@@ -57,6 +57,9 @@ module.exports = {
       if (account.status === "LOCKED") {
         throwError("ACCOUNT_BLOCKED", "Tài khoản của bạn đã bị khóa!");
       }
+
+      await Account.updateOne({ _id: account?._id }, { isUpgrade: true });
+      account.isUpgrade = true;
 
       const user = await User.findOne({ accountId: account._id });
 

@@ -7,9 +7,12 @@ module.exports = (role) => ({
   authenticateToken: async (req, res, next) => {
     try {
       if (
-        ["virtual-assistant", "bot-image", "bot-audio"].includes(
-          req.url.split("/")[3]
-        )
+        [
+          "virtual-assistant",
+          "bot-image",
+          "bot-audio",
+          "bot-versatile",
+        ].includes(req.url.split("/")[3])
       ) {
         const accountId = req.headers.accountid;
         const account = await Account.findById(accountId);
@@ -67,10 +70,7 @@ module.exports = (role) => ({
         }
 
         if (data._id !== req.headers.accountid && role !== "ADMIN") {
-          throwError(
-            "ACCESS_IS_NOT_ALLOWED",
-            "Không được phép truy cập thông tin của người khác!"
-          );
+          throwError("ACCESS_IS_NOT_ALLOWED", "AccountId không chính xác!");
         }
 
         req.data = data;

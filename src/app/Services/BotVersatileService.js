@@ -11,12 +11,21 @@ const {
 const { getById, uploadFile } = require("./CommonService");
 
 const { BotVersatile } = require("../Models/BotVersatile");
+const { Account } = require("../Models/Account");
 
 module.exports = {
   sendMessage: async ({ botVersatileId, messages, accountId, host }) => {
     try {
       return getById(botVersatileId, BotVersatile, "mẫu bot", async (value) => {
         let result = null;
+        let model = null;
+        const account = await Account.findById(accountId);
+        if (account.isUpgrade) {
+          model = "gpt-4-vision-preview";
+        } else {
+          model = "gpt-3.5-turbo";
+        }
+
         if (["TEXT", "AUDIO"].includes(value?.type)) {
           result = await botVersatile({
             accountId,
@@ -24,6 +33,7 @@ module.exports = {
               ...[{ role: "system", content: value.content }],
               ...messages,
             ],
+            model,
             typeResponse: value?.type,
             host,
           });

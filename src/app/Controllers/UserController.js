@@ -153,4 +153,23 @@ module.exports = (app) => {
     },
     "ADMIN"
   );
+
+  // API thay đổi mô hình
+  onRoute("put", "/change-model", async (req, res) => {
+    try {
+      // Các hàm xử lý request
+      const request = checkNullRequest(req.query, ["isUpgrade"]);
+
+      // Hàm xử lý logic và trả ra kết quả
+      const result = await userService.changeModel({
+        accountId: req.headers.accountid,
+        ...request,
+      });
+
+      // Hàm trả về response cho người dùng
+      onResponse(res, result).ok({ sttValue: `Cập nhật dữ liệu thành công!` });
+    } catch (error) {
+      onResponse(res, null).badRequest(error);
+    }
+  });
 };
