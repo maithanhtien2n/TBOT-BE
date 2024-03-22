@@ -16,7 +16,7 @@ const openai = new OpenAI({
 });
 
 const GPT_DEFAULT = "gpt-3.5-turbo";
-const DALL_DEFAULT = "dall-e-2";
+const DALL_DEFAULT = "dall-e-3";
 const TTS_DEFAULT = "tts-1";
 
 const AI_ERROR = {
@@ -281,7 +281,7 @@ module.exports = {
     accountId,
     model = DALL_DEFAULT,
     prompt = "",
-    quality = "standard",
+    quality = "hd", // hd, standard
     quantity = 1,
   }) => {
     try {
