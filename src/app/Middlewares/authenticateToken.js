@@ -12,7 +12,8 @@ module.exports = (role) => ({
           "bot-image",
           "bot-audio",
           "bot-versatile",
-        ].includes(req.url.split("/")[3] && role !== "ADMIN")
+        ].includes(req.url.split("/")[3]) &&
+        role !== "ADMIN"
       ) {
         const accountId = req.headers.accountid;
         const account = await Account.findById(accountId);
